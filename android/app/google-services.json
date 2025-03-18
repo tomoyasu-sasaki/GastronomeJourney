@@ -12,7 +12,12 @@
           "package_name": "com.example.gastronomejourney"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "491162828468-0sqhgn0n7janrduj0e8rvdqrfv86obfl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBak6MOoUgb0u17kZ4Iim37L0J3TooB3co"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "491162828468-0sqhgn0n7janrduj0e8rvdqrfv86obfl.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "491162828468-a4eccfpb1qvscselt18q7bb4lf997kau.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.gastronomejourney"
+              }
+            }
+          ]
         }
       }
     }

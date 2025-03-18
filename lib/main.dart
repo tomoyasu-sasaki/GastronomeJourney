@@ -2,10 +2,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'app.dart';
+import 'config/firebase_config.dart';
+import 'config/web_config.dart';
+import 'core/utils/env_helper.dart';
 import 'core/utils/logger.dart';
-import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,14 +17,22 @@ void main() async {
   try {
     await dotenv.load(fileName: '.env');
     AppLog.i('環境変数の読み込みに成功しました');
+    
+    // 環境変数の検証（Web以外のプラットフォームの場合）
+    if (!kIsWeb && !EnvHelper.validateFirebaseConfig()) {
+      AppLog.w('一部の環境変数が設定されていないか、不正な値です。デフォルト値を使用します。');
+    }
   } catch (e) {
     AppLog.e('環境変数の読み込みに失敗しました: $e');
+    AppLog.i('デフォルト値を使用して処理を続行します');
   }
   
   // Firebaseの初期化
   try {
     await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
+      options: kIsWeb 
+          ? WebFirebaseConfig.options  // Web用の直接設定を使用
+          : FirebaseConfig.currentPlatformOptions,  // モバイル用は環境変数から
     );
     AppLog.i('Firebaseの初期化に成功しました');
     // Firebaseのリモート構成設定やクラッシュ解析の有効化などを追加予定
