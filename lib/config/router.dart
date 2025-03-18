@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:gastronomejourney/features/auth/presentation/screens/sign_in_screen.dart';
 import 'package:gastronomejourney/features/auth/presentation/screens/sign_up_screen.dart';
 import 'package:gastronomejourney/features/auth/presentation/screens/password_reset_screen.dart';
+import 'package:gastronomejourney/features/auth/presentation/screens/profile_screen.dart';
 import 'package:gastronomejourney/features/auth/presentation/providers/auth_provider.dart';
 import 'package:gastronomejourney/features/home/presentation/screens/home_screen.dart';
 
@@ -56,6 +57,10 @@ GoRouter router(RouterRef ref) {
       GoRoute(
         path: '/',
         builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: '/profile',
+        builder: (context, state) => const ProfileScreen(),
       ),
     ],
   );

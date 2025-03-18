@@ -1,66 +1,68 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gastronomejourney/features/auth/domain/models/auth_state.dart';
 import 'package:gastronomejourney/features/auth/presentation/providers/auth_provider.dart';
+import 'package:go_router/go_router.dart';
 
-class HomeScreen extends HookConsumerWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
 
-    return authState.when(
-      data: (state) => state.when(
-        initial: () => const Center(child: CircularProgressIndicator()),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        authenticated: (user) => Scaffold(
-          appBar: AppBar(
-            title: const Text('ホーム'),
-            actions: [
-              IconButton(
-                onPressed: () {
-                  ref.read(authControllerProvider.notifier).signOut();
-                },
-                icon: const Icon(Icons.logout),
-              ),
-            ],
-          ),
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundImage: user.photoURL != null
-                      ? NetworkImage(user.photoURL!)
-                      : null,
-                  child: user.photoURL == null
-                      ? const Icon(Icons.person, size: 40)
-                      : null,
+    return Scaffold(
+      body: authState.when(
+        data: (state) => state.when(
+          initial: () => const Center(child: CircularProgressIndicator()),
+          loading: () => const Center(child: CircularProgressIndicator()),
+          authenticated: (user) => Scaffold(
+            appBar: AppBar(
+              title: const Text('ホーム'),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.person),
+                  onPressed: () {
+                    // TODO: プロフィール画面への遷移を実装
+                    context.push('/profile');
+                  },
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  user.displayName ?? 'ゲスト',
-                  style: Theme.of(context).textTheme.titleLarge,
+                IconButton(
+                  icon: const Icon(Icons.logout),
+                  onPressed: () {
+                    ref.read(authControllerProvider.notifier).signOut();
+                  },
                 ),
-                const SizedBox(height: 8),
-                Text(user.email),
               ],
             ),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (user.photoURL != null)
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundImage: NetworkImage(user.photoURL!),
+                    ),
+                  const SizedBox(height: 16),
+                  Text(
+                    user.displayName ?? 'ゲスト',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    user.email,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ],
+              ),
+            ),
           ),
+          unauthenticated: () => const Center(child: Text('認証が必要です')),
+          error: (message) => Center(child: Text('エラー: $message')),
         ),
-        unauthenticated: () => const Center(
-          child: Text('認証が必要です'),
-        ),
-        error: (message) => Center(
-          child: Text('エラー: $message'),
-        ),
-      ),
-      error: (error, stackTrace) => Center(
-        child: Text('エラー: $error'),
-      ),
-      loading: () => const Center(
-        child: CircularProgressIndicator(),
+        error: (error, stackTrace) => Center(child: Text('エラー: $error')),
+        loading: () => const Center(child: CircularProgressIndicator()),
       ),
     );
   }

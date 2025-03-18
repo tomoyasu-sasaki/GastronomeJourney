@@ -87,16 +87,6 @@ class AuthController extends StateNotifier<AuthState> {
     }
   }
 
-  Future<void> sendPasswordResetEmail(String email) async {
-    try {
-      state = const AuthState.loading();
-      await _repository.sendPasswordResetEmail(email);
-      state = const AuthState.unauthenticated();
-    } catch (e) {
-      state = AuthState.error(e.toString());
-    }
-  }
-
   Future<void> updateProfile({
     String? displayName,
     String? photoURL,
@@ -107,13 +97,39 @@ class AuthController extends StateNotifier<AuthState> {
         displayName: displayName,
         photoURL: photoURL,
       );
-      // プロフィール更新後に最新のユーザー情報を取得
-      final updatedUser = await _repository.authStateChanges.first;
+      // プロフィール更新後、最新のユーザー情報を取得
+      final updatedUser = await _repository.getCurrentUser();
       if (updatedUser != null) {
         state = AuthState.authenticated(updatedUser);
       } else {
         state = const AuthState.unauthenticated();
       }
+    } catch (e) {
+      state = AuthState.error(e.toString());
+    }
+  }
+
+  Future<void> sendEmailVerification() async {
+    try {
+      state = const AuthState.loading();
+      await _repository.sendEmailVerification();
+      // メール送信後、最新のユーザー情報を取得
+      final updatedUser = await _repository.getCurrentUser();
+      if (updatedUser != null) {
+        state = AuthState.authenticated(updatedUser);
+      } else {
+        state = const AuthState.unauthenticated();
+      }
+    } catch (e) {
+      state = AuthState.error(e.toString());
+    }
+  }
+
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      state = const AuthState.loading();
+      await _repository.sendPasswordResetEmail(email);
+      state = const AuthState.unauthenticated();
     } catch (e) {
       state = AuthState.error(e.toString());
     }

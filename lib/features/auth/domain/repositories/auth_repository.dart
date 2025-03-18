@@ -26,5 +26,9 @@ abstract class AuthRepository {
     String? photoURL,
   });
   
+  Future<void> sendEmailVerification();
+  
+  Future<UserModel?> getCurrentUser();
+  
   Future<void> deleteAccount();
 } 
