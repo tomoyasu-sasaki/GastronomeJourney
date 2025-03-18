@@ -20,6 +20,16 @@
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="A new Flutter project.">
 
+  <!-- TODO: セキュリティヘッダーの設定を見直す必要があります
+       現在の'unsafe-none'設定は一時的な回避策であり、セキュリティ上のリスクがあります
+       1. 本番環境では適切なCOOP/COEP設定を行う
+       2. Google Identity Servicesの新しいAPIに対応した設定に更新
+       3. Firebase Hostingを使用する場合は、カスタムヘッダーの設定を検討
+  -->
+  <!-- Security Headers -->
+  <meta http-equiv="Cross-Origin-Opener-Policy" content="unsafe-none">
+  <meta http-equiv="Cross-Origin-Embedder-Policy" content="unsafe-none">
+
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -31,6 +41,21 @@
 
   <title>gastronomejourney</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Firebase Configuration -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
+  <!-- Initialize Firebase -->
+  <script>
+    window.flutterWebRenderer = "html";
+    window.addEventListener('load', function() {
+      // Firebase Auth UIの初期化を待機
+      if (typeof firebase !== 'undefined') {
+        firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+      }
+    });
+  </script>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>

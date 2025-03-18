@@ -1,50 +1,62 @@
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../features/auth/presentation/screens/auth_test_screen.dart';
-import '../features/auth/presentation/screens/env_test_screen.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:gastronomejourney/features/auth/presentation/screens/sign_in_screen.dart';
+import 'package:gastronomejourney/features/auth/presentation/screens/sign_up_screen.dart';
+import 'package:gastronomejourney/features/auth/presentation/screens/password_reset_screen.dart';
+import 'package:gastronomejourney/features/auth/presentation/providers/auth_provider.dart';
+import 'package:gastronomejourney/features/home/presentation/screens/home_screen.dart';
 
-/// アプリケーションのルーティング設定
-final appRouter = GoRouter(
-  initialLocation: '/auth-test',
-  debugLogDiagnostics: true,
-  routes: [
-    GoRoute(
-      path: '/',
-      name: 'home',
-      builder: (context, state) => const Scaffold(
-        body: Center(
-          child: Text('ホーム画面'),
+part 'router.g.dart';
+
+@riverpod
+// ignore: deprecated_member_use_from_same_package
+GoRouter router(RouterRef ref) {
+  final authState = ref.watch(authStateProvider);
+
+  return GoRouter(
+    initialLocation: '/auth/sign-in',
+    redirect: (context, state) {
+      final isAuthenticated = authState.when(
+        data: (state) => state.maybeWhen(
+          authenticated: (_) => true,
+          orElse: () => false,
         ),
+        error: (_, __) => false,
+        loading: () => false,
+      );
+
+      final isAuthRoute = state.matchedLocation.startsWith('/auth');
+
+      // 認証済みの場合、認証関連ページにアクセスするとホームにリダイレクト
+      if (isAuthenticated && isAuthRoute) {
+        return '/';
+      }
+
+      // 未認証の場合、認証関連ページ以外にアクセスするとサインインページにリダイレクト
+      if (!isAuthenticated && !isAuthRoute) {
+        return '/auth/sign-in';
+      }
+
+      return null;
+    },
+    routes: [
+      GoRoute(
+        path: '/auth/sign-in',
+        builder: (context, state) => const SignInScreen(),
       ),
-    ),
-    GoRoute(
-      path: '/env-test',
-      name: 'env-test',
-      builder: (context, state) => const EnvTestScreen(),
-    ),
-    GoRoute(
-      path: '/auth-test',
-      name: 'auth-test',
-      builder: (context, state) => const AuthTestScreen(),
-    ),
-    // 今後、認証画面、居酒屋一覧画面、詳細画面などを追加予定
-  ],
-  errorBuilder: (context, state) => Scaffold(
-    body: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            'ページが見つかりません',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () => context.go('/'),
-            child: const Text('ホームに戻る'),
-          ),
-        ],
+      GoRoute(
+        path: '/auth/sign-up',
+        builder: (context, state) => const SignUpScreen(),
       ),
-    ),
-  ),
-); 
+      GoRoute(
+        path: '/auth/reset-password',
+        builder: (context, state) => const PasswordResetScreen(),
+      ),
+      GoRoute(
+        path: '/',
+        builder: (context, state) => const HomeScreen(),
+      ),
+    ],
+  );
+} 

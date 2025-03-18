@@ -1,56 +1,24 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
-import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import '../core/utils/env_helper.dart';
+import 'package:gastronomejourney/config/web_config.dart';
 
 /// Firebase設定（環境変数を使用）
 class FirebaseConfig {
-  static FirebaseOptions get webOptions {
-    final config = EnvHelper.getWebConfig();
-    return FirebaseOptions(
-      apiKey: config['apiKey'] ?? '',
-      appId: config['appId'] ?? '',
-      messagingSenderId: config['messagingSenderId'] ?? '',
-      projectId: config['projectId'] ?? '',
-      authDomain: config['authDomain'] ?? '',
-      storageBucket: config['storageBucket'] ?? '',
-    );
-  }
-
-  static FirebaseOptions get androidOptions {
-    final config = EnvHelper.getAndroidConfig();
-    return FirebaseOptions(
-      apiKey: config['apiKey'] ?? '',
-      appId: config['appId'] ?? '',
-      messagingSenderId: config['messagingSenderId'] ?? '',
-      projectId: config['projectId'] ?? '',
-      storageBucket: config['storageBucket'] ?? '',
-    );
-  }
-
-  static FirebaseOptions get iosOptions {
-    final config = EnvHelper.getIOSConfig();
-    return FirebaseOptions(
-      apiKey: config['apiKey'] ?? '',
-      appId: config['appId'] ?? '',
-      messagingSenderId: config['messagingSenderId'] ?? '',
-      projectId: config['projectId'] ?? '',
-      storageBucket: config['storageBucket'] ?? '',
-      iosBundleId: config['iosBundleId'] ?? '',
-    );
-  }
-
-  static FirebaseOptions get currentPlatformOptions {
+  static Future<FirebaseOptions> getOptions() async {
     if (kIsWeb) {
-      return webOptions;
+      return WebFirebaseConfig.options;
     }
-    
-    switch (defaultTargetPlatform) {
-      case TargetPlatform.android:
-        return androidOptions;
-      case TargetPlatform.iOS:
-        return iosOptions;
-      default:
-        return androidOptions; // デフォルトとしてAndroid設定を返す
-    }
+
+    final envHelper = EnvHelper();
+    return FirebaseOptions(
+      apiKey: await envHelper.getFirebaseApiKey(),
+      appId: await envHelper.getFirebaseAppId(),
+      messagingSenderId: await envHelper.getFirebaseMessagingSenderId(),
+      projectId: await envHelper.getFirebaseProjectId(),
+      storageBucket: await envHelper.getFirebaseStorageBucket(),
+      iosClientId: await envHelper.getFirebaseIosClientId(),
+      iosBundleId: await envHelper.getFirebaseIosBundleId(),
+    );
   }
 } 

@@ -2,6 +2,42 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// 環境変数を安全に扱うためのヘルパークラス
 class EnvHelper {
+  String _getEnvValue(String key) {
+    final value = dotenv.env[key];
+    if (value == null) {
+      throw Exception('環境変数 $key が設定されていません');
+    }
+    return value;
+  }
+
+  Future<String> getFirebaseApiKey() async {
+    return _getEnvValue('FIREBASE_API_KEY');
+  }
+
+  Future<String> getFirebaseAppId() async {
+    return _getEnvValue('FIREBASE_APP_ID');
+  }
+
+  Future<String> getFirebaseMessagingSenderId() async {
+    return _getEnvValue('FIREBASE_MESSAGING_SENDER_ID');
+  }
+
+  Future<String> getFirebaseProjectId() async {
+    return _getEnvValue('FIREBASE_PROJECT_ID');
+  }
+
+  Future<String> getFirebaseStorageBucket() async {
+    return _getEnvValue('FIREBASE_STORAGE_BUCKET');
+  }
+
+  Future<String> getFirebaseIosClientId() async {
+    return _getEnvValue('FIREBASE_IOS_CLIENT_ID');
+  }
+
+  Future<String> getFirebaseIosBundleId() async {
+    return _getEnvValue('FIREBASE_IOS_BUNDLE_ID');
+  }
+
   /// Firebaseの構成値を安全に取得
   static String getFirebaseValue(String key, {String defaultValue = ''}) {
     try {

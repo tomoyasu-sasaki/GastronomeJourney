@@ -30,8 +30,8 @@ class EnvTestScreen extends StatelessWidget {
     String errorMessage = '';
     
     try {
-      final auth = FirebaseAuth.instance;
-      isInitialized = auth != null;
+      // ignore: unnecessary_null_comparison
+      isInitialized = FirebaseAuth.instance.app != null;
     } catch (e) {
       errorMessage = e.toString();
       isInitialized = false;
@@ -76,8 +76,8 @@ class EnvTestScreen extends StatelessWidget {
                 ),
               ),
             const SizedBox(height: 12),
-            ...envVars.entries.map((entry) {
-              return Padding(
+            ...envVars.entries.map((entry) => 
+              Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: Text(
                   '${entry.key}: ${entry.value ?? "未設定"}',
@@ -86,22 +86,21 @@ class EnvTestScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-              );
-            }).toList(),
-            
+              ),
+            ),
             const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.all(8),
               color: Colors.blue.shade50,
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     '実行環境: ${kIsWeb ? "Web" : "ネイティブ"}',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   if (kIsWeb)
-                    const Text(
+                    Text(
                       '注意: Webモードでは.envファイルを assets フォルダに追加し、pubspec.yamlにアセットとして登録する必要があります。',
                       style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
                     ),
