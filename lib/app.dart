@@ -25,7 +25,7 @@ class App extends ConsumerWidget {
         Locale('ja', ''),
         Locale('en', ''),
       ],
-      routerConfig: appRouter,
+      routerConfig: ref.watch(routerProvider),
     );
   }
 } 

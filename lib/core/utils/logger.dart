@@ -8,7 +8,7 @@ final appLogger = Logger(
     lineLength: 120, // ログの幅
     colors: true, // カラー表示
     printEmojis: true, // 絵文字表示
-    printTime: true, // タイムスタンプ表示
+    dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart, // タイムスタンプ表示
   ),
   level: Level.debug, // 最小出力レベル（リリースビルドでは変更予定）
 );
@@ -23,11 +23,11 @@ Logger getReleaseLogger() {
 
 /// ロガーレベルに応じて適切なログを出力するユーティリティメソッド
 class AppLog {
-  static void v(String message, [dynamic error, StackTrace? stackTrace]) {
+  static void t(String message, [dynamic error, StackTrace? stackTrace]) {
     if (error != null) {
-      appLogger.v('$message\nError: $error${stackTrace != null ? '\nStackTrace: $stackTrace' : ''}');
+      appLogger.t('$message\nError: $error${stackTrace != null ? '\nStackTrace: $stackTrace' : ''}');
     } else {
-      appLogger.v(message);
+      appLogger.t(message);
     }
   }
 
@@ -63,11 +63,11 @@ class AppLog {
     }
   }
 
-  static void wtf(String message, [dynamic error, StackTrace? stackTrace]) {
+  static void f(String message, [dynamic error, StackTrace? stackTrace]) {
     if (error != null) {
-      appLogger.wtf('$message\nError: $error${stackTrace != null ? '\nStackTrace: $stackTrace' : ''}');
+      appLogger.f('$message\nError: $error${stackTrace != null ? '\nStackTrace: $stackTrace' : ''}');
     } else {
-      appLogger.wtf(message);
+      appLogger.f(message);
     }
   }
 } 
