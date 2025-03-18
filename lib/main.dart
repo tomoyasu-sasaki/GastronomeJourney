@@ -1,7 +1,28 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-void main() {
-  runApp(const MyApp());
+import 'app.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Firebaseの初期化
+  // TODO: Firebase設定ファイル作成後に有効化する
+  /* 
+  try {
+    await Firebase.initializeApp();
+    // Firebaseのリモート構成設定やクラッシュ解析の有効化などを追加予定
+  } catch (e) {
+    debugPrint('Firebase初期化エラー: $e');
+  }
+  */
+  
+  runApp(
+    const ProviderScope(
+      child: App(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
