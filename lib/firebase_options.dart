@@ -3,6 +3,7 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -49,20 +50,20 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBak6MOoUgb0u17kZ4Iim37L0J3TooB3co',
-    appId: '1:491162828468:android:962926424407b593cca1e1',
-    messagingSenderId: '491162828468',
-    projectId: 'gastronomejourney',
-    storageBucket: 'gastronomejourney.firebasestorage.app',
+  static FirebaseOptions android = FirebaseOptions(
+    apiKey: dotenv.env['FIREBASE_API_KEY'] ?? '',
+    appId: dotenv.env['FIREBASE_APP_ID'] ?? '',
+    messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID'] ?? '',
+    projectId: dotenv.env['FIREBASE_PROJECT_ID'] ?? '',
+    storageBucket: dotenv.env['FIREBASE_STORAGE_BUCKET'] ?? '',
   );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAX-bhAjZzTN_uqnsz5f9KWEMgZ44Uirg4',
-    appId: '1:491162828468:ios:2fc459672fdb74afcca1e1',
-    messagingSenderId: '491162828468',
-    projectId: 'gastronomejourney',
-    storageBucket: 'gastronomejourney.firebasestorage.app',
-    iosBundleId: 'com.example.gastronomejourney',
+  static FirebaseOptions ios = FirebaseOptions(
+    apiKey: dotenv.env['FIREBASE_API_KEY'] ?? '',
+    appId: dotenv.env['FIREBASE_APP_ID'] ?? '',
+    messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID'] ?? '',
+    projectId: dotenv.env['FIREBASE_PROJECT_ID'] ?? '',
+    storageBucket: dotenv.env['FIREBASE_STORAGE_BUCKET'] ?? '',
+    iosBundleId: dotenv.env['FIREBASE_IOS_BUNDLE_ID'] ?? '',
   );
 }
