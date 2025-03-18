@@ -1,22 +1,33 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
+import 'core/utils/logger.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Firebaseの初期化
-  // TODO: Firebase設定ファイル作成後に有効化する
-  /* 
+  // 環境変数の読み込み
   try {
-    await Firebase.initializeApp();
+    await dotenv.load(fileName: '.env');
+    AppLog.i('環境変数の読み込みに成功しました');
+  } catch (e) {
+    AppLog.e('環境変数の読み込みに失敗しました: $e');
+  }
+  
+  // Firebaseの初期化
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    AppLog.i('Firebaseの初期化に成功しました');
     // Firebaseのリモート構成設定やクラッシュ解析の有効化などを追加予定
   } catch (e) {
-    debugPrint('Firebase初期化エラー: $e');
+    AppLog.e('Firebase初期化エラー: $e');
   }
-  */
   
   runApp(
     const ProviderScope(
