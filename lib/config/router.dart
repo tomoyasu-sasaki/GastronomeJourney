@@ -1,67 +1,36 @@
-// import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:gastronomejourney/features/auth/presentation/screens/sign_in_screen.dart';
-import 'package:gastronomejourney/features/auth/presentation/screens/sign_up_screen.dart';
-import 'package:gastronomejourney/features/auth/presentation/screens/password_reset_screen.dart';
-import 'package:gastronomejourney/features/auth/presentation/screens/profile_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gastronomejourney/features/auth/presentation/providers/auth_provider.dart';
-import 'package:gastronomejourney/features/home/presentation/screens/home_screen.dart';
+import 'package:gastronomejourney/features/auth/presentation/screens/sign_in_screen.dart';
+import 'package:gastronomejourney/features/home/presentation/screens/main_screen.dart';
+import 'package:go_router/go_router.dart';
 
-part 'router.g.dart';
-
-@riverpod
-// ignore: deprecated_member_use_from_same_package
-GoRouter router(RouterRef ref) {
+final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
 
   return GoRouter(
-    initialLocation: '/auth/sign-in',
+    initialLocation: '/',
     redirect: (context, state) {
-      final isAuthenticated = authState.when(
-        data: (state) => state.maybeWhen(
-          authenticated: (_) => true,
-          orElse: () => false,
+      return authState.when(
+        data: (authState) => authState.when(
+          initial: () => null,
+          loading: () => null,
+          authenticated: (_) => state.matchedLocation == '/sign-in' ? '/' : null,
+          unauthenticated: () => '/sign-in',
+          error: (_) => '/sign-in',
         ),
-        error: (_, __) => false,
-        loading: () => false,
+        loading: () => null,
+        error: (_, __) => '/sign-in',
       );
-
-      final isAuthRoute = state.matchedLocation.startsWith('/auth');
-
-      // 認証済みの場合、認証関連ページにアクセスするとホームにリダイレクト
-      if (isAuthenticated && isAuthRoute) {
-        return '/';
-      }
-
-      // 未認証の場合、認証関連ページ以外にアクセスするとサインインページにリダイレクト
-      if (!isAuthenticated && !isAuthRoute) {
-        return '/auth/sign-in';
-      }
-
-      return null;
     },
     routes: [
       GoRoute(
-        path: '/auth/sign-in',
-        builder: (context, state) => const SignInScreen(),
-      ),
-      GoRoute(
-        path: '/auth/sign-up',
-        builder: (context, state) => const SignUpScreen(),
-      ),
-      GoRoute(
-        path: '/auth/reset-password',
-        builder: (context, state) => const PasswordResetScreen(),
-      ),
-      GoRoute(
         path: '/',
-        builder: (context, state) => const HomeScreen(),
+        builder: (context, state) => const MainScreen(),
       ),
       GoRoute(
-        path: '/profile',
-        builder: (context, state) => const ProfileScreen(),
+        path: '/sign-in',
+        builder: (context, state) => const SignInScreen(),
       ),
     ],
   );
-} 
+}); 

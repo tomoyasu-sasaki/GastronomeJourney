@@ -1,68 +1,78 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gastronomejourney/features/auth/domain/models/auth_state.dart';
-import 'package:gastronomejourney/features/auth/presentation/providers/auth_provider.dart';
-import 'package:go_router/go_router.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authStateProvider);
-
     return Scaffold(
-      body: authState.when(
-        data: (state) => state.when(
-          initial: () => const Center(child: CircularProgressIndicator()),
-          loading: () => const Center(child: CircularProgressIndicator()),
-          authenticated: (user) => Scaffold(
-            appBar: AppBar(
-              title: const Text('ホーム'),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.person),
-                  onPressed: () {
-                    // TODO: プロフィール画面への遷移を実装
-                    context.push('/profile');
-                  },
+      appBar: AppBar(
+        title: const Text('GastronomeJourney'),
+        centerTitle: true,
+      ),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: 10, // TODO: 実際のデータに置き換える
+        itemBuilder: (context, index) {
+          return Card(
+            margin: const EdgeInsets.only(bottom: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(12),
+                      ),
+                    ),
+                    child: const Center(
+                      child: Icon(Icons.image, size: 48, color: Colors.grey),
+                    ),
+                  ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.logout),
-                  onPressed: () {
-                    ref.read(authControllerProvider.notifier).signOut();
-                  },
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '居酒屋名 ${index + 1}',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '東京都渋谷区...',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(Icons.star, size: 16, color: Colors.amber),
+                          const SizedBox(width: 4),
+                          Text(
+                            '4.5',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          const SizedBox(width: 16),
+                          const Icon(Icons.monetization_on, size: 16),
+                          const SizedBox(width: 4),
+                          Text(
+                            '¥3,000 ~ ¥5,000',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (user.photoURL != null)
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundImage: NetworkImage(user.photoURL!),
-                    ),
-                  const SizedBox(height: 16),
-                  Text(
-                    user.displayName ?? 'ゲスト',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    user.email,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          unauthenticated: () => const Center(child: Text('認証が必要です')),
-          error: (message) => Center(child: Text('エラー: $message')),
-        ),
-        error: (error, stackTrace) => Center(child: Text('エラー: $error')),
-        loading: () => const Center(child: CircularProgressIndicator()),
+          );
+        },
       ),
     );
   }
