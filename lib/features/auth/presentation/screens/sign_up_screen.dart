@@ -15,12 +15,31 @@ class SignUpScreen extends HookConsumerWidget {
     final passwordController = useTextEditingController();
     final confirmPasswordController = useTextEditingController();
     final formKey = useMemoized(() => GlobalKey<FormState>());
+    final isLoading = useState(false);
 
     ref.listen(authControllerProvider, (previous, next) {
       next.whenOrNull(
-        error: (message) {
+        loading: () {
+          isLoading.value = true;
+        },
+        authenticated: (_) {
+          isLoading.value = false;
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(message)),
+            const SnackBar(
+              content: Text('アカウントの作成が完了しました'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          // サインイン画面に戻る
+          context.pop();
+        },
+        error: (message) {
+          isLoading.value = false;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(message),
+              backgroundColor: Colors.red,
+            ),
           );
         },
       );
@@ -37,6 +56,7 @@ class SignUpScreen extends HookConsumerWidget {
               controller: emailController,
               labelText: 'メールアドレス',
               keyboardType: TextInputType.emailAddress,
+              enabled: !isLoading.value,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'メールアドレスを入力してください';
@@ -52,6 +72,7 @@ class SignUpScreen extends HookConsumerWidget {
               controller: passwordController,
               labelText: 'パスワード',
               obscureText: true,
+              enabled: !isLoading.value,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'パスワードを入力してください';
@@ -67,6 +88,7 @@ class SignUpScreen extends HookConsumerWidget {
               controller: confirmPasswordController,
               labelText: 'パスワード（確認）',
               obscureText: true,
+              enabled: !isLoading.value,
               textInputAction: TextInputAction.done,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -82,15 +104,26 @@ class SignUpScreen extends HookConsumerWidget {
             SizedBox(
               width: double.infinity,
               child: FilledButton(
-                onPressed: () async {
-                  if (formKey.currentState?.validate() ?? false) {
-                    await ref.read(authControllerProvider.notifier).signUpWithEmail(
-                          email: emailController.text,
-                          password: passwordController.text,
-                        );
-                  }
-                },
-                child: const Text('新規登録'),
+                onPressed: isLoading.value
+                    ? null
+                    : () async {
+                        if (formKey.currentState?.validate() ?? false) {
+                          await ref.read(authControllerProvider.notifier).signUpWithEmail(
+                                email: emailController.text,
+                                password: passwordController.text,
+                              );
+                        }
+                      },
+                child: isLoading.value
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text('新規登録'),
               ),
             ),
             const SizedBox(height: 24),
@@ -99,9 +132,7 @@ class SignUpScreen extends HookConsumerWidget {
               children: [
                 const Text('すでにアカウントをお持ちの場合は'),
                 TextButton(
-                  onPressed: () {
-                    context.pop();
-                  },
+                  onPressed: isLoading.value ? null : () => context.pop(),
                   child: const Text('サインイン'),
                 ),
               ],

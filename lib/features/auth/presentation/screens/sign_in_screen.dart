@@ -14,12 +14,29 @@ class SignInScreen extends HookConsumerWidget {
     final emailController = useTextEditingController();
     final passwordController = useTextEditingController();
     final formKey = useMemoized(() => GlobalKey<FormState>());
+    final isLoading = useState(false);
 
     ref.listen(authControllerProvider, (previous, next) {
       next.whenOrNull(
-        error: (message) {
+        loading: () {
+          isLoading.value = true;
+        },
+        authenticated: (_) {
+          isLoading.value = false;
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(message)),
+            const SnackBar(
+              content: Text('サインインしました'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        },
+        error: (message) {
+          isLoading.value = false;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(message),
+              backgroundColor: Colors.red,
+            ),
           );
         },
       );
@@ -36,6 +53,7 @@ class SignInScreen extends HookConsumerWidget {
               controller: emailController,
               labelText: 'メールアドレス',
               keyboardType: TextInputType.emailAddress,
+              enabled: !isLoading.value,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'メールアドレスを入力してください';
@@ -51,6 +69,7 @@ class SignInScreen extends HookConsumerWidget {
               controller: passwordController,
               labelText: 'パスワード',
               obscureText: true,
+              enabled: !isLoading.value,
               textInputAction: TextInputAction.done,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -66,20 +85,31 @@ class SignInScreen extends HookConsumerWidget {
             SizedBox(
               width: double.infinity,
               child: FilledButton(
-                onPressed: () async {
-                  if (formKey.currentState?.validate() ?? false) {
-                    await ref.read(authControllerProvider.notifier).signInWithEmail(
-                          email: emailController.text,
-                          password: passwordController.text,
-                        );
-                  }
-                },
-                child: const Text('サインイン'),
+                onPressed: isLoading.value
+                    ? null
+                    : () async {
+                        if (formKey.currentState?.validate() ?? false) {
+                          await ref.read(authControllerProvider.notifier).signInWithEmail(
+                                email: emailController.text,
+                                password: passwordController.text,
+                              );
+                        }
+                      },
+                child: isLoading.value
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text('サインイン'),
               ),
             ),
             const SizedBox(height: 16),
             TextButton(
-              onPressed: () {
+              onPressed: isLoading.value ? null : () {
                 context.push('/auth/reset-password');
               },
               child: const Text('パスワードをお忘れの方'),
@@ -90,9 +120,11 @@ class SignInScreen extends HookConsumerWidget {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: () {
-                  ref.read(authControllerProvider.notifier).signInWithGoogle();
-                },
+                onPressed: isLoading.value
+                    ? null
+                    : () {
+                        ref.read(authControllerProvider.notifier).signInWithGoogle();
+                      },
                 icon: const Icon(Icons.g_mobiledata),
                 label: const Text('Googleでサインイン'),
               ),
@@ -101,9 +133,11 @@ class SignInScreen extends HookConsumerWidget {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: () {
-                  ref.read(authControllerProvider.notifier).signInWithApple();
-                },
+                onPressed: isLoading.value
+                    ? null
+                    : () {
+                        ref.read(authControllerProvider.notifier).signInWithApple();
+                      },
                 icon: const Icon(Icons.apple),
                 label: const Text('Appleでサインイン'),
               ),
@@ -114,7 +148,7 @@ class SignInScreen extends HookConsumerWidget {
               children: [
                 const Text('アカウントをお持ちでない場合は'),
                 TextButton(
-                  onPressed: () {
+                  onPressed: isLoading.value ? null : () {
                     context.push('/auth/sign-up');
                   },
                   child: const Text('新規登録'),

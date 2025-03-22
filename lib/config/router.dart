@@ -2,6 +2,8 @@
 import '../features/auth/presentation/providers/auth_provider.dart';
 // import 'package:gastronomejourney/features/auth/presentation/providers/auth_provider.dart';
 import 'package:gastronomejourney/features/auth/presentation/screens/sign_in_screen.dart';
+import 'package:gastronomejourney/features/auth/presentation/screens/sign_up_screen.dart';
+import 'package:gastronomejourney/features/auth/presentation/screens/password_reset_screen.dart';
 import 'package:gastronomejourney/features/home/presentation/screens/main_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -15,16 +17,29 @@ final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/',
     redirect: (context, state) {
+      // 認証関連の画面パスのリスト
+      final isAuthRoute = [
+        '/sign-in',
+        '/auth/sign-up',
+        '/auth/reset-password',
+      ].contains(state.matchedLocation);
+
       return authState.when(
         data: (authState) => authState.when(
           initial: () => null,
           loading: () => null,
-          authenticated: (_) => state.matchedLocation == '/sign-in' ? '/' : null,
-          unauthenticated: () => '/sign-in',
-          error: (_) => '/sign-in',
+          authenticated: (_) {
+            // 認証済みの場合、認証関連画面にアクセスしようとしたらホームにリダイレクト
+            return isAuthRoute ? '/' : null;
+          },
+          unauthenticated: () {
+            // 未認証の場合、認証関連画面以外へのアクセスはサインイン画面にリダイレクト
+            return !isAuthRoute ? '/sign-in' : null;
+          },
+          error: (_) => !isAuthRoute ? '/sign-in' : null,
         ),
         loading: () => null,
-        error: (_, __) => '/sign-in',
+        error: (_, __) => !isAuthRoute ? '/sign-in' : null,
       );
     },
     routes: [
@@ -35,6 +50,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/sign-in',
         builder: (context, state) => const SignInScreen(),
+      ),
+      GoRoute(
+        path: '/auth/sign-up',
+        builder: (context, state) => const SignUpScreen(),
+      ),
+      GoRoute(
+        path: '/auth/reset-password',
+        builder: (context, state) => const PasswordResetScreen(),
       ),
       GoRoute(
         path: '/izakaya/new',
@@ -49,4 +72,4 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
     ],
   );
-}); 
+});

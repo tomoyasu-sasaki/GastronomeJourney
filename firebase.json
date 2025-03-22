@@ -1,1 +1,37 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"gastronomejourney","appId":"1:491162828468:android:962926424407b593cca1e1","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"gastronomejourney","appId":"1:491162828468:ios:2fc459672fdb74afcca1e1","uploadDebugSymbols":true,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"gastronomejourney","configurations":{"web":"1:491162828468:web:4704b18d428823f7cca1e1"}}},"macos":{"default":{"projectId":"gastronomejourney","appId":"1:491162828468:ios:2fc459672fdb74afcca1e1","uploadDebugSymbols":true,"fileOutput":"macos/Runner/GoogleService-Info.plist"}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "gastronomejourney",
+          "appId": "1:491162828468:android:962926424407b593cca1e1",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "gastronomejourney",
+          "appId": "1:491162828468:ios:2fc459672fdb74afcca1e1",
+          "uploadDebugSymbols": true,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "gastronomejourney",
+          "configurations": {
+            "web": "1:491162828468:web:4704b18d428823f7cca1e1"
+          }
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "gastronomejourney",
+          "appId": "1:491162828468:ios:2fc459672fdb74afcca1e1",
+          "uploadDebugSymbols": true,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      }
+    }
+  }
+}

@@ -54,23 +54,23 @@ class EnvHelper {
   /// Web用のFirebase設定値を取得
   static Map<String, String> getWebConfig() {
     return {
-      'apiKey': getFirebaseValue('FIREBASE_API_KEY'),
-      'appId': getFirebaseValue('FIREBASE_APP_ID'),
-      'messagingSenderId': getFirebaseValue('FIREBASE_MESSAGING_SENDER_ID'),
-      'projectId': getFirebaseValue('FIREBASE_PROJECT_ID'),
-      'authDomain': getFirebaseValue('FIREBASE_AUTH_DOMAIN'),
-      'storageBucket': getFirebaseValue('FIREBASE_STORAGE_BUCKET'),
+      'apiKey': getFirebaseValue('FIREBASE_WEB_API_KEY'),
+      'appId': getFirebaseValue('FIREBASE_WEB_APP_ID'),
+      'messagingSenderId': getFirebaseValue('FIREBASE_WEB_MESSAGING_SENDER_ID'),
+      'projectId': getFirebaseValue('FIREBASE_WEB_PROJECT_ID'),
+      'authDomain': getFirebaseValue('FIREBASE_WEB_AUTH_DOMAIN'),
+      'storageBucket': getFirebaseValue('FIREBASE_WEB_STORAGE_BUCKET'),
     };
   }
 
   /// Android用のFirebase設定値を取得
   static Map<String, String> getAndroidConfig() {
     return {
-      'apiKey': getFirebaseValue('FIREBASE_API_KEY'),
-      'appId': getFirebaseValue('FIREBASE_APP_ID'),
-      'messagingSenderId': getFirebaseValue('FIREBASE_MESSAGING_SENDER_ID'),
-      'projectId': getFirebaseValue('FIREBASE_PROJECT_ID'),
-      'storageBucket': getFirebaseValue('FIREBASE_STORAGE_BUCKET'),
+      'apiKey': getFirebaseValue('FIREBASE_ANDROID_API_KEY'),
+      'appId': getFirebaseValue('FIREBASE_ANDROID_APP_ID'),
+      'messagingSenderId': getFirebaseValue('FIREBASE_ANDROID_MESSAGING_SENDER_ID'),
+      'projectId': getFirebaseValue('FIREBASE_ANDROID_PROJECT_ID'),
+      'storageBucket': getFirebaseValue('FIREBASE_ANDROID_STORAGE_BUCKET'),
     };
   }
 
@@ -94,11 +94,11 @@ class EnvHelper {
   /// 環境変数が正しく設定されているかチェック
   static bool validateFirebaseConfig() {
     final requiredKeys = [
-      'FIREBASE_API_KEY',
-      'FIREBASE_APP_ID',
-      'FIREBASE_MESSAGING_SENDER_ID',
-      'FIREBASE_PROJECT_ID',
-      'FIREBASE_STORAGE_BUCKET',
+      'FIREBASE_WEB_API_KEY',
+      'FIREBASE_WEB_APP_ID',
+      'FIREBASE_WEB_MESSAGING_SENDER_ID',
+      'FIREBASE_WEB_PROJECT_ID',
+      'FIREBASE_WEB_STORAGE_BUCKET',
     ];
 
     for (final key in requiredKeys) {
